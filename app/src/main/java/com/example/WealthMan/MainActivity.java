@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         initData();
 
 
-        
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
