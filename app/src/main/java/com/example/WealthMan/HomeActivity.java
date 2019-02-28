@@ -24,7 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import  android.content.Intent;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 public class HomeActivity extends AppCompatActivity {
     EditText mTextURI;
     Button mButtonOk;
+    Button mButtontest;
 //    final TextView mTextView = (TextView)findViewById(R.id.text);
 
     @Override
@@ -69,6 +70,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         mButtonOk = (Button)findViewById(R.id.button);
+        mButtontest = (Button)findViewById(R.id.button2);
+
         mTextURI = (EditText)findViewById(R.id.url_to_fetch);
         final TextView mTextView = (TextView)findViewById(R.id.text);
         mTextURI.append("");
@@ -77,6 +80,18 @@ public class HomeActivity extends AppCompatActivity {
         mTextView.setMovementMethod(new ScrollingMovementMethod());
 // Gson
         final GsonBuilder gsonBuilder = new GsonBuilder();
+
+//        mButtontest.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v){
+////                Intent intent = getIntent();
+////                String str = intent.getStringExtra("Symbol");
+//                // Enable the following to go to Detail Activity and retrieve the Symbol with the above lines
+//
+//
+//                Intent intent = new Intent(getApplicationContext(), com.example.WealthMan.MainActivity.class);
+//                startActivity(MainActivity);
+//            }});
 // ...
         mButtonOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +157,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-    public boolean updateSymbols() {
+
+
+
+            public boolean updateSymbols() {
         String symbolUrl = "https://api.iextrading.com/1.0/ref-data/symbols";
         GsonBuilder gsonSymbols = new GsonBuilder();
         boolean success = false;
