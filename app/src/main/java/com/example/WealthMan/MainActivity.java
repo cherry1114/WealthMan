@@ -1,15 +1,20 @@
 package com.example.WealthMan;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<IconBean> mIconBeenList = new ArrayList<>();
@@ -31,14 +36,23 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(new IconAdapter(this,mIconBeenList));
         initData();
 
-//        IconAdapter adapter = new IconAdapter(
-//                MainActivity.this,R.layout.lv_item,data);
-//        ListView listView = lv;
+
+        
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,int position,long id){
+                IconBean stock = mIconBeenList.get(position);
+                Intent intent = new Intent(MainActivity.this,com.example.WealthMan.detail.view.DetailActivity.class);
+                intent.putExtra("Symbol",stock.symbol);
+                intent.putExtra("UserID",this.userid);
+                startActivity(intent);
 
 
-        }
+            }
 
-
+        });
+    };
 
 
      private void initData() {
