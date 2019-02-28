@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
      private void initData() {
         IconBean symbol=new IconBean("FB","FaceBook",7.77,7.99);
         mIconBeenList.add(symbol);
-        mIconBeenList.add(symbol);
+         IconBean symbol1=new IconBean("AMZN","AMZON",7.77,-7.99);
+        mIconBeenList.add(symbol1);
         mIconBeenList.add(symbol);
         mIconBeenList.add(symbol);
         mIconBeenList.add(symbol);
