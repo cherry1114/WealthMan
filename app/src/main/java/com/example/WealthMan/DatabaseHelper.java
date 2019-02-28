@@ -5,7 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.os.strictmode.SqliteObjectLeakedViolation;
 import android.util.Log;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String DATABASE_NAME ="register.db";
@@ -17,11 +22,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String COL_5 ="pin";        // Stored as TEXT to preserve any leading Zeros
 
     public static final String SYM_TBL = "symbols";
-    public static final String SYM_COL_1 = "symbol";
+    public static final String SYM_COL_1 = "id";
     public static final String SYM_COL_2 = "name";
+    public static final String SYM_COL_3 = "symbol";
 
     public static final String WL_TBL = "watchlist";
-    public static final String WL_COL_1 = "symbol";
+    public static final String WL_COL_USER = "userid";
+    public static final String WL_COL_SYMBOL = "symbol";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -30,14 +37,68 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE registeruser (ID INTEGER PRIMARY  KEY AUTOINCREMENT, username TEXT, password TEXT, email TEXT, pin TEXT)");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS symbols (symbol TEXT PRIMARY KEY, name TEXT)");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS watchlist (symbol TEXT PRIMARY KEY)");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS symbols (ID INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, symbol TEXT)");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS watchlist (userid TEXT, symbol TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL(" DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(sqLiteDatabase);
+    }
+    public long createWatchlist(){
+        String[] wlArray = {"intc","aapl","fb","aal","bac","csc","wfc",
+        "wmt","cof","amzn","vmw","ibm","dell","hpq","msft","jnpr","orcl"};
+        SQLiteDatabase db = this.getReadableDatabase();
+        long res = 0;
+        for (int i = 0 ; i < wlArray.length; i++){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(WL_COL_USER, 1);
+
+            contentValues.put(WL_COL_SYMBOL, wlArray[i]);
+            res = db.insert(WL_TBL,null,contentValues);
+        }
+        db.close();
+        return res;
+    }
+    public long addWatch(int userid, String symbol){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(WL_COL_USER, userid);
+        contentValues.put(WL_COL_SYMBOL, symbol);
+        long res = db.insert(WL_TBL,null,contentValues);
+        db.close();
+        return res;
+    }
+    public void remWatch(String symbol, int userid){
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME+ " WHERE "+ WL_COL_SYMBOL + " = " + symbol + "AND userid=" + userid +";");
+        db.close();
+    }
+    public int getUserId(String Email){
+        String[] columns = { COL_1 };
+        SQLiteDatabase db = getReadableDatabase();
+        String selection = COL_4 + "=?";
+        String[] selectionArgs = {Email};
+        Cursor cursor = db.query(TABLE_NAME,columns,selection,selectionArgs,null,null,null);
+        cursor.moveToFirst();//***!!!very important
+        int count = cursor.getCount();
+        int userid = 0;
+        if(count>0){
+            userid = cursor.getInt(cursor.getColumnIndex("ID"));
+            cursor.close();
+            db.close();
+            }
+        return  userid;
+    }
+    public String getWatchList(){
+        String result;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT GROUP_CONCAT(symbol) as symbol from watchlist",null);
+        cursor.moveToFirst();
+        result = cursor.getString(cursor.getColumnIndex("symbol"));
+        db.close();
+        return result;
     }
 
     public long addUser(String user, String password, String email, String pin){
@@ -52,16 +113,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.close();
         return  res;
     }
-    public long addSymbol(String sym, String name){
+    public long addSymbol(String name, String sym){
         SQLiteDatabase db = this.getReadableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("symbol", sym);
+//        contentValues.put("symbol", '"' + sym + '"');
+//        contentValues.put("name", '"' + name + '"');
         contentValues.put("name", name);
+        contentValues.put("symbol", sym);
         long res = db.insert(SYM_TBL,null, contentValues);
         db.close();
         return res;
     }
-
     public boolean checkUser(String email, String password){
         System.out.println("checkuser:::"+email);
         String[] columns = { COL_1 };
