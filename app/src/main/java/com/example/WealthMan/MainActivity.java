@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
+
      private void initData() {
         IconBean symbol=new IconBean("FB","FaceBook",7.77,7.99);
         mIconBeenList.add(symbol);

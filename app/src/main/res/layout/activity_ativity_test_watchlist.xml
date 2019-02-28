@@ -6,19 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
+        <Button
+            android:id="@+id/update_data_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:text="OK"/>
 
         <ListView
             android:id="@+id/lv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="500dp"
+            android:layout_above="@id/update_data_btn"
+            android:divider="@color/colorPrimaryDark"
+            android:dividerHeight="3dp"
+            android:listSelector="#CCCCCC"
+            android:scrollbars="none" />
 
-        </ListView>
 
-    </LinearLayout>
+    </RelativeLayout>
+
+
 
 
 
